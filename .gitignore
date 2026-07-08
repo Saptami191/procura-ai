@@ -28,3 +28,4 @@ backend/*.egg-info/
 
 # Logs
 *.log
+backend/logs/
