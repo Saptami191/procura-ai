@@ -4,13 +4,18 @@ from fastapi import FastAPI
 from loguru import logger
 
 from app.core import settings, setup_logging
+from app.db import close_db, init_db
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging()
     logger.info("Application starting", environment=settings.app_env)
+    if settings.database_url:
+        await init_db()
     yield
+    if settings.database_url:
+        await close_db()
     logger.info("Application shutting down")
 
 
@@ -26,7 +31,7 @@ app = FastAPI(
 
 @app.get("/")
 async def root() -> dict[str, str]:
-    return {"message": "Procura AI - Enterprise AI Workforce Platform"}
+    return {"message": f"{settings.app_name} - Enterprise AI Workforce Platform"}
 
 
 @app.get("/health")
