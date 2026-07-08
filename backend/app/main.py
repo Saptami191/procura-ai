@@ -26,7 +26,7 @@ app = FastAPI(
 
 @app.get("/")
 async def root() -> dict[str, str]:
-    return {"message": f"{settings.app_name} - Enterprise AI Workforce Platform"}
+    return {"message": "Procura AI - Enterprise AI Workforce Platform"}
 
 
 @app.get("/health")
