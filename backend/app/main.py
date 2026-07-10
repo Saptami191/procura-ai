@@ -3,8 +3,11 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from loguru import logger
 
+from app.auth.middleware import AuthContextMiddleware
 from app.core import settings, setup_logging
+from app.core.exception_handlers import register_exception_handlers
 from app.db import close_db, init_db
+from app.users.router import router as users_router
 
 
 @asynccontextmanager
@@ -27,6 +30,11 @@ app = FastAPI(
     redoc_url=None if settings.is_production else "/redoc",
     lifespan=lifespan,
 )
+
+register_exception_handlers(app)
+
+app.add_middleware(AuthContextMiddleware)
+app.include_router(users_router, prefix=settings.api_prefix)
 
 
 @app.get("/")

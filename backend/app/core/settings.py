@@ -39,11 +39,17 @@ class Settings(BaseSettings):
     redis_url: str | None = Field(default=None, alias="REDIS_URL")
 
     # Security
-    secret_key: str = Field(default="change-me-in-production", alias="SECRET_KEY")
+    secret_key: str = Field(
+        default="change-me-in-production-to-a-secure-256bit-key",
+        alias="SECRET_KEY",
+    )
     jwt_secret: str | None = Field(default=None, alias="JWT_SECRET")
     jwt_algorithm: str = Field(default="HS256", alias="JWT_ALGORITHM")
-    access_token_expire_minutes: int = Field(default=30, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
-    refresh_token_expire_days: int = Field(default=7, alias="REFRESH_TOKEN_EXPIRE_DAYS")
+    access_token_expire_minutes: int = Field(default=15, alias="ACCESS_TOKEN_EXPIRE_MINUTES")
+    refresh_token_expire_days: int = Field(default=30, alias="REFRESH_TOKEN_EXPIRE_DAYS")
+    password_argon2_memory: int = Field(default=19456, alias="PASSWORD_ARGON2_MEMORY")
+    password_argon2_time: int = Field(default=2, alias="PASSWORD_ARGON2_TIME")
+    password_argon2_parallelism: int = Field(default=1, alias="PASSWORD_ARGON2_PARALLELISM")
 
     # CORS
     allowed_origins: list[str] = Field(default=["http://localhost:3000"], alias="ALLOWED_ORIGINS")
