@@ -29,3 +29,6 @@ backend/*.egg-info/
 # Logs
 *.log
 backend/logs/
+
+# Backups and temporary envs
+*venv_old*/
