@@ -71,3 +71,4 @@ check_untyped_defs = true
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 asyncio_mode = "auto"
+pythonpath = ["."]

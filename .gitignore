@@ -30,5 +30,10 @@ backend/*.egg-info/
 *.log
 backend/logs/
 
+# Pytest and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
 # Backups and temporary envs
 *venv_old*/
