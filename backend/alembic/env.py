@@ -4,7 +4,12 @@ from logging.config import fileConfig
 from sqlalchemy.ext.asyncio import create_async_engine
 
 from alembic import context
-from app.db.base import Base  # noqa: F401
+
+# Register all models so Alembic detects them
+from app.auth.models import LoginAttempt, RefreshToken, Session  # noqa: F401
+from app.core import settings
+from app.db.base import Base
+from app.users.models import User  # noqa: F401
 
 config = context.config
 if config.config_file_name is not None:
@@ -14,7 +19,7 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    url = config.get_main_option("sqlalchemy.url")
+    url = settings.database_url or config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -32,7 +37,7 @@ def do_run_migrations(connection):
 
 
 async def run_async_migrations() -> None:
-    url = config.get_main_option("sqlalchemy.url")
+    url = settings.database_url or config.get_main_option("sqlalchemy.url")
     connectable = create_async_engine(url)
 
     async with connectable.connect() as connection:
