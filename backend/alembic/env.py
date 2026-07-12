@@ -9,6 +9,7 @@ from alembic import context
 from app.auth.models import LoginAttempt, RefreshToken, Session  # noqa: F401
 from app.core import settings
 from app.db.base import Base
+from app.modules.organization.models import Organization  # noqa: F401
 from app.users.models import User  # noqa: F401
 
 config = context.config
