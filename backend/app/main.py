@@ -7,8 +7,8 @@ from app.auth.middleware import AuthContextMiddleware
 from app.core import settings, setup_logging
 from app.core.exception_handlers import register_exception_handlers
 from app.db import close_db, init_db
+from app.domains.user.router import router as users_router
 from app.modules.organization.router import router as organization_router
-from app.users.router import router as users_router
 
 
 @asynccontextmanager
