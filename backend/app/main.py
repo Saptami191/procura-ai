@@ -7,6 +7,7 @@ from app.auth.middleware import AuthContextMiddleware
 from app.core import settings, setup_logging
 from app.core.exception_handlers import register_exception_handlers
 from app.db import close_db, init_db
+from app.modules.organization.router import router as organization_router
 from app.users.router import router as users_router
 
 
@@ -35,6 +36,7 @@ register_exception_handlers(app)
 
 app.add_middleware(AuthContextMiddleware)
 app.include_router(users_router, prefix=settings.api_prefix)
+app.include_router(organization_router, prefix=settings.api_prefix)
 
 
 @app.get("/")
