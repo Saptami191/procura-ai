@@ -4,11 +4,14 @@ from fastapi import FastAPI
 from loguru import logger
 
 from app.auth.middleware import AuthContextMiddleware
+from app.auth.router import router as auth_router
 from app.core import settings, setup_logging
 from app.core.exception_handlers import register_exception_handlers
 from app.db import close_db, init_db
+from app.domains.organization_membership.router import router as membership_router
 from app.domains.user.router import router as users_router
 from app.modules.organization.router import router as organization_router
+
 
 
 @asynccontextmanager
@@ -35,8 +38,10 @@ app = FastAPI(
 register_exception_handlers(app)
 
 app.add_middleware(AuthContextMiddleware)
+app.include_router(auth_router, prefix=settings.api_prefix)
 app.include_router(users_router, prefix=settings.api_prefix)
 app.include_router(organization_router, prefix=settings.api_prefix)
+app.include_router(membership_router, prefix=settings.api_prefix)
 
 
 @app.get("/")
