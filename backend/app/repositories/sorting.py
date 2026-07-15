@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from sqlalchemy.sql.expression import Select
 
 
-class SortDirection(str, Enum):
+class SortDirection(StrEnum):
     ASC = "asc"
     DESC = "desc"
 
