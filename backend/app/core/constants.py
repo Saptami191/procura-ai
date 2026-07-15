@@ -1,22 +1,22 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import StrEnum
 
 
-class Environment(str, Enum):
+class Environment(StrEnum):
     DEVELOPMENT = "development"
     STAGING = "staging"
     PRODUCTION = "production"
     TEST = "test"
 
 
-class Role(str, Enum):
+class Role(StrEnum):
     ADMIN = "admin"
     MANAGER = "manager"
     EMPLOYEE = "employee"
 
 
-class Permission(str, Enum):
+class Permission(StrEnum):
     READ = "read"
     WRITE = "write"
     DELETE = "delete"

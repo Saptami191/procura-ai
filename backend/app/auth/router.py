@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Request, status
 
-from app.auth.dependencies import get_auth_service, get_current_user
+from app.auth.dependencies import get_auth_service
 from app.auth.exceptions import InvalidCredentialsException
 from app.auth.schemas import (
-    CurrentUser,
     LoginRequest,
     LoginResponse,
     LogoutRequest,

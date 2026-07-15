@@ -1,15 +1,14 @@
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, UTC
-from unittest.mock import AsyncMock, MagicMock, patch
+from datetime import UTC, datetime
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
 
 from app.auth.dependencies import get_auth_service
-from app.auth.exceptions import InvalidCredentialsException
 from app.auth.schemas import TokenResponse
 from app.auth.service import AuthService
 from app.domains.user.dependencies import get_current_user_model, get_user_service
