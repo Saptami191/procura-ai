@@ -1,6 +1,6 @@
 # Procura AI
 
-Enterprise AI Workforce Platform.
+Enterprise AI Workforce Platform 
 
 ## Stack
 
