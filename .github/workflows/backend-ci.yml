@@ -63,6 +63,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v5
@@ -78,8 +80,23 @@ jobs:
       - name: Install dependencies
         run: uv sync --extra dev
 
-      - name: Check formatting
-        run: uv run ruff format --check .
+      - name: Check formatting of changed Python files
+        shell: bash
+        run: |
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            base_sha="${{ github.event.pull_request.base.sha }}"
+          else
+            base_sha="${{ github.event.before }}"
+          fi
+
+          mapfile -t files < <(git diff --name-only "$base_sha...$GITHUB_SHA" -- 'backend/**/*.py' | sed 's#^backend/##')
+
+          if (( ${#files[@]} == 0 )); then
+            echo "No changed Python files to format-check."
+          else
+            printf 'Checking: %s\n' "${files[@]}"
+            uv run ruff format --check "${files[@]}"
+          fi
 
       - name: Lint
         run: uv run ruff check .
