@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from app.core.settings import Settings
 
 
+# Production-only configuration used by the validation tests.
 PRODUCTION_VALUES = {
     "app_env": "production",
     "secret_key": "s" * 32,
