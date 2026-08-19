@@ -86,7 +86,7 @@ class Settings(BaseSettings):
 
         if len(self.secret_key) < 32:
             raise ValueError("SECRET_KEY must be at least 32 characters in production")
-        if len(self.resolved_jwt_secret) < 32:
+        if not self.jwt_secret or len(self.jwt_secret) < 32:
             raise ValueError("JWT_SECRET must be at least 32 characters in production")
         if not self.database_url:
             raise ValueError("DATABASE_URL is required in production")
