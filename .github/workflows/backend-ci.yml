@@ -1,0 +1,88 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, chore/production-hardening]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-lint:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: procura_test
+          POSTGRES_USER: procura
+          POSTGRES_PASSWORD: procura
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U procura -d procura_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    defaults:
+      run:
+        working-directory: backend
+
+    env:
+      APP_ENV: test
+      DEBUG: "false"
+      SECRET_KEY: test-secret-key-that-is-long-enough-for-tests
+      JWT_SECRET: test-jwt-secret-that-is-long-enough-for-tests
+      DATABASE_URL: postgresql+asyncpg://procura:procura@localhost:5432/procura_test
+      REDIS_URL: redis://localhost:6379/0
+      ALLOWED_ORIGINS: '["http://localhost:3000"]'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Check formatting
+        run: uv run ruff format --check .
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Test
+        run: uv run pytest -q
