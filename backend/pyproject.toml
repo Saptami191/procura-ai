@@ -55,6 +55,10 @@ exclude = [
 select = ["E", "F", "I", "N", "W", "UP"]
 ignore = ["N818"]
 
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+known-third-party = ["pydantic", "pytest"]
+
 [tool.ruff.format]
 quote-style = "double"
 

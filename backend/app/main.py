@@ -1,12 +1,13 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 from loguru import logger
 
 from app.auth.middleware import AuthContextMiddleware
 from app.auth.router import router as auth_router
 from app.core import settings, setup_logging
 from app.core.exception_handlers import register_exception_handlers
+from app.core.health import readiness_status
 from app.db import close_db, init_db
 from app.domains.organization_membership.router import router as membership_router
 from app.domains.rbac.middleware import AuthorizationContextMiddleware
@@ -52,7 +53,25 @@ async def root() -> dict[str, str]:
     return {"message": f"{settings.app_name} - Enterprise AI Workforce Platform"}
 
 
-@app.get("/health")
-async def health() -> dict[str, str]:
-    logger.debug("Health check called")
-    return {"status": "healthy"}
+@app.get("/health/live", include_in_schema=False)
+async def liveness() -> dict[str, str]:
+    """Process-level liveness probe; does not depend on external services."""
+    return {"status": "alive"}
+
+
+@app.get("/health/ready", include_in_schema=False)
+async def readiness(response: Response) -> dict[str, object]:
+    """Dependency readiness probe for load balancers and orchestrators."""
+    result = await readiness_status()
+    if result["status"] != "ready":
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    return result
+
+
+@app.get("/health", include_in_schema=False)
+async def health(response: Response) -> dict[str, object]:
+    """Backward-compatible health endpoint with readiness semantics."""
+    result = await readiness_status()
+    if result["status"] != "ready":
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    return result
